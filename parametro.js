@@ -110,18 +110,23 @@ const Form = document.getElementById('form');
 // Agrega los siguientes eventos a la zona de arrastre
 dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
-    dropArea.classList.add('drag-over');
+    dropArea.classList.add('active'); // drag-over
+    dragText.textContent = "Suelte los Archivos";  //no estaba
 });
 
 dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('drag-over');
+    dropArea.classList.remove('active');  //drag-over
+    dragText.textContent = 'Arrastra tus archivos aquí';  // no estaba
 });
 
 dropArea.addEventListener('drop', (e) => {
     e.preventDefault();
-    dropArea.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    handleFile(file);
+    dropArea.classList.remove('active');   //drag-over
+    dragText.textContent = 'Arrastra tus archivos aquí';  //no estaba
+    const files = e.dataTransfer.files;
+    for (let i = 0; i < files.length; i++) {
+        handleFile(files[i]);
+    }
 });
 
 // Función para manejar el archivo seleccionado
@@ -136,16 +141,27 @@ function handleFile(file) {
 }
 
 // Agrega esta función para manejar el evento de envío del formulario
-Form.addEventListener('submit', (e) => {
+document.getElementById('Form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const fileInput = Form.querySelector('#archivo');
-    const file = fileInput.files[0];
-    if (file) {
-        // Puedes enviar el archivo al servidor para su procesamiento aquí
-        console.log('Subir archivo:', file.name);
+    const fileInput = document.querySelector('#archivo');
+    const files = fileInput.files; // Obtiene todos los archivos seleccionados
+
+    if (files.length > 0) {
+        // Crea un objeto FormData para enviar los archivos
+        const formData = new FormData();
+        for (const file of files) {
+            formData.append('archivos[]', file); // 'archivos[]' es el nombre del campo que recibirás en el servidor
+        }
+
+        // Envía la solicitud fetch
+        fetch('subir.php?nombre=' + encodeURIComponent(carpetaNombre), { // Asegúrate de que la URL sea correcta
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text()) // Cambia a .text() si esperas una respuesta en texto
+        .then(data => console.log('Respuesta del servidor:', data))
+        .catch(error => console.error('Error:', error));
     } else {
-        alert('Por favor, seleccione un archivo primero.');
+        alert('Por favor, seleccione al menos un archivo.');
     }
 });
-
-//progres bar 

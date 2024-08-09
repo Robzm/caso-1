@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^instafile/([^/]+)$ /casos_practica/instafile/?nombre=$1 [L,QSA]
