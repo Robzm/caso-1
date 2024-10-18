@@ -1,23 +1,22 @@
 // Obtén la URL actual
 const urlActual = window.location.href;
 
-// Verifica si el parámetro 'nombre' ya está presente en la URL
-const parametros = new URLSearchParams(window.location.search);
-let carpetaNombre = parametros.get("nombre");
+// Verifica si los 3 caracteres ya están presentes al final de la URL
+const urlPartes = urlActual.split('/');
+let carpetaNombre = urlPartes[urlPartes.length - 1];
 
-if (!carpetaNombre) {
-    // Si 'nombre' no está presente, genera un número aleatorio
-    carpetaNombre = generarCadenaAleatoria();
-    // Agrega el parámetro 'nombre' a la URL
-    const urlConParametro = urlActual.includes("?") ? `${urlActual}&nombre=${carpetaNombre}` : `${urlActual}?nombre=${carpetaNombre}`;
-    // Redirige a la nueva URL con el parámetro 'nombre'
-    window.location.href = urlConParametro;
+// Verifica si 'carpetaNombre' tiene exactamente 3 caracteres, de lo contrario genera uno nuevo
+if (!carpetaNombre || carpetaNombre.length !== 3) {
+    carpetaNombre = generarCadenaAleatoria();   
+    // Redirige a la nueva URL con los caracteres al final
+    const urlConCarpeta = urlActual.endsWith('/') ? `${urlActual}${carpetaNombre}` : `${urlActual}/${carpetaNombre}`;
+    window.location.href = urlConCarpeta;
 } else {
     // Llama a la función para crear la carpeta con el nombre obtenido
     crearCarpeta(carpetaNombre);
 }
 
-// Función para generar una cadena aleatoria
+// Función para generar una cadena aleatoria de 3 caracteres
 function generarCadenaAleatoria() {
     const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let cadenaAleatoria = '';
@@ -27,6 +26,7 @@ function generarCadenaAleatoria() {
     }
     return cadenaAleatoria;
 }
+
 
 // Función para crear la carpeta
 function crearCarpeta(carpetaNombre) {

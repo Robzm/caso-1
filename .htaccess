@@ -1,2 +1,6 @@
 RewriteEngine On
-RewriteRule ^instafile/([^/]+)$ /casos_practica/instafile/?nombre=$1 [L,QSA]
+
+# Redirigir todas las solicitudes a un archivo index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
